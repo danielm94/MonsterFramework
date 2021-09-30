@@ -1,15 +1,14 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="Example Suite" verbose="1" parallel="classes">
     <test name="Chrome Suite">
-        <parameter name="browser" value="chrome"/>
+        <parameter name="username" value="chrome"/>
+        <parameter name="password" value="poop"/>
         <classes>
-            <class name="ExampleTest"/>
-        </classes>
-    </test>
-    <test name="Firefox Suite">
-        <parameter name="browser" value="firefox"/>
-        <classes>
-            <class name="ExampleTest"/>
+            <class name="ExampleTest">
+                <methods>
+                    <include name="azureTest"/>
+                </methods>
+            </class>
         </classes>
     </test>
 </suite>

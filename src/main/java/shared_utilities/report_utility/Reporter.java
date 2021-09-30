@@ -34,7 +34,7 @@ public class Reporter {
     }
 
     public void flushReport() {
-        report.flush();
+        if (report != null) report.flush();
     }
 
     public void setupReporter(String reportName) {

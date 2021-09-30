@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class UITestBase extends TestListenerAdapter {
     protected static String baseUrl;
+    protected static ThreadLocal<Boolean> reportsEnabled = new ThreadLocal<>();
 
     @BeforeClass
     public void beforeClass() {
@@ -46,34 +47,36 @@ public class UITestBase extends TestListenerAdapter {
 
     @Override
     public void onTestFailure(ITestResult result) {
-        Log.log(Status.FAIL, result.getMethod()
-                                   .getMethodName() + " has failed.");
-        ThreadLocal<String> screenshotFile = new ThreadLocal<>();
-        try {
-            screenshotFile.set(Screenshot.captureBrowser(Driver.getInstance()
-                                                               .getDriver(),
-                    Reporter.getInstance()
-                            .getReportDirectory(),
-                    result.getMethod()
-                          .getMethodName() + "_" + TimeStamp.getTimeStamp() + "_FAILURE"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.addScreenshotFromPath(screenshotFile.get(), "Screenshot of browser on failure");
-        if (result.getThrowable() != null) {
-            Log.log(Status.FAIL, result.getThrowable());
+        if (reportsEnabled.get()) {
+            Log.log(Status.FAIL, result.getMethod()
+                                       .getMethodName() + " has failed.");
+            ThreadLocal<String> screenshotFile = new ThreadLocal<>();
+            try {
+                screenshotFile.set(Screenshot.captureBrowser(Driver.getInstance()
+                                                                   .getDriver(),
+                        Reporter.getInstance()
+                                .getReportDirectory(),
+                        result.getMethod()
+                              .getMethodName() + "_" + TimeStamp.getTimeStamp() + "_FAILURE"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.addScreenshotFromPath(screenshotFile.get(), "Screenshot of browser on failure");
+            if (result.getThrowable() != null) {
+                Log.log(Status.FAIL, result.getThrowable());
+            }
         }
     }
 
     @Override
     public void onTestStart(ITestResult result) {
-        boolean reportsEnabled = result.getMethod()
-                                       .getConstructorOrMethod()
-                                       .getMethod()
-                                       .getAnnotation(TestReporter.class) != null;
+        reportsEnabled.set(result.getMethod()
+                                 .getConstructorOrMethod()
+                                 .getMethod()
+                                 .getAnnotation(TestReporter.class) != null);
         TestReport.getInstance()
-                  .setTestReportsEnabled(reportsEnabled);
-        if (reportsEnabled) {
+                  .setTestReportsEnabled(reportsEnabled.get());
+        if (reportsEnabled.get()) {
             Reporter.getInstance()
                     .setupReporter(result.getMethod()
                                          .getRealClass()
