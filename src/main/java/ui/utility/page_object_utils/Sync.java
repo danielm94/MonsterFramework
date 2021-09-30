@@ -10,6 +10,7 @@ import shared_utilities.data_readers.property_file.FrameworkPropertyFile;
 import ui.utility.driver.Driver;
 
 import java.time.Duration;
+import java.util.List;
 
 public final class Sync {
     private static final long DEFAULT_TIME_OUT = getDefaultTimeout();
@@ -50,6 +51,18 @@ public final class Sync {
         WebDriverWait wait = new WebDriverWait(Driver.getInstance()
                                                      .getDriver(), duration);
         return wait.until(ExpectedConditions.refreshed(ExpectedConditions.visibilityOf(element)));
+    }
+
+    public static List<WebElement> waitUntilAllVisible(By locator) {
+        WebDriverWait wait = new WebDriverWait(Driver.getInstance()
+                                                     .getDriver(), Duration.ofSeconds(DEFAULT_TIME_OUT));
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
+    }
+
+    public static List<WebElement> waitUntilAllVisible(By locator, Duration duration) {
+        WebDriverWait wait = new WebDriverWait(Driver.getInstance()
+                                                     .getDriver(), duration);
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
     }
 
     /*--Wait until clickable--*/
@@ -189,5 +202,12 @@ public final class Sync {
         WebDriverWait wait = new WebDriverWait(Driver.getInstance()
                                                      .getDriver(), duration);
         return wait.until(condition);
+    }
+
+    public static void waitUntilPageLoaded() {
+        WebDriverWait wait = new WebDriverWait(Driver.getInstance()
+                                                     .getDriver(), Duration.ofSeconds(DEFAULT_TIME_OUT));
+        wait.until(driver -> JsExecutor.executeScript("return document.readyState")
+                                       .equals("complete"));
     }
 }

@@ -37,7 +37,7 @@ public class Reporter {
         report.flush();
     }
 
-    public void setupReporter(String reportName) throws IOException {
+    public void setupReporter(String reportName) {
         if (extentReportsDirectory == null) {
             extentReportsDirectory = PropertyReader.getProperty(FrameworkPropertyFile.GLOBAL_PROPERTIES, "extentReportsDirectory");
         }

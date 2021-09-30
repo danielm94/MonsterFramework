@@ -5,6 +5,7 @@ import com.aventstack.extentreports.ExtentTest;
 public class TestReport {
     private static TestReport testReport;
     private static final ThreadLocal<ExtentTest> test = new ThreadLocal<>();
+    private static final ThreadLocal<Boolean> testReportsEnabled = new ThreadLocal<>();
 
     private TestReport() {
     }
@@ -41,5 +42,13 @@ public class TestReport {
 
     public ExtentTest getTest() {
         return test.get();
+    }
+
+    public void setTestReportsEnabled(boolean enabled) {
+        testReportsEnabled.set(enabled);
+    }
+
+    public boolean getTestReportsEnabled() {
+        return testReportsEnabled.get();
     }
 }

@@ -1,5 +1,7 @@
 package ui.utility.page_object_utils;
 
+import ui.utility.driver.Driver;
+
 import java.time.Duration;
 
 public final class PageTitle {
@@ -20,5 +22,11 @@ public final class PageTitle {
 
     public static boolean matchesExactly(String exactTitle, Duration duration) {
         return Sync.waitUntilTitleMatchesExactly(exactTitle, duration);
+    }
+
+    public static String getTitle() {
+        return Driver.getInstance()
+                     .getDriver()
+                     .getTitle();
     }
 }

@@ -44,17 +44,6 @@ public class UITestBase extends TestListenerAdapter {
                 .flushReport();
     }
 
-
-    @Override
-    public void onStart(ITestContext context) {
-        try {
-            Reporter.getInstance()
-                    .setupReporter(context.getName());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onTestFailure(ITestResult result) {
         Log.log(Status.FAIL, result.getMethod()
@@ -78,27 +67,47 @@ public class UITestBase extends TestListenerAdapter {
 
     @Override
     public void onTestStart(ITestResult result) {
-        ThreadLocal<String> testReportTitle = new ThreadLocal<>();
-        testReportTitle.set(result.getMethod()
-                                  .getConstructorOrMethod()
-                                  .getMethod()
-                                  .getAnnotation(TestReportInformation.class)
-                                  .title());
-        ThreadLocal<String> testReportDescription = new ThreadLocal<>();
-        testReportDescription.set(result.getMethod()
-                                        .getConstructorOrMethod()
-                                        .getMethod()
-                                        .getAnnotation(TestReportInformation.class)
-                                        .description());
+        boolean reportsEnabled = result.getMethod()
+                                       .getConstructorOrMethod()
+                                       .getMethod()
+                                       .getAnnotation(TestReporter.class) != null;
         TestReport.getInstance()
-                  .createTestReport(testReportTitle.get(), testReportDescription.get());
-        TestReport.getInstance()
-                  .assignTestCategories(result.getMethod()
-                                              .getGroups());
+                  .setTestReportsEnabled(reportsEnabled);
+        if (reportsEnabled) {
+            Reporter.getInstance()
+                    .setupReporter(result.getMethod()
+                                         .getRealClass()
+                                         .getName());
+            ThreadLocal<String> testReportTitle = new ThreadLocal<>();
+            testReportTitle.set(result.getMethod()
+                                      .getConstructorOrMethod()
+                                      .getMethod()
+                                      .getAnnotation(TestReporter.class)
+                                      .title());
+            ThreadLocal<String> testReportDescription = new ThreadLocal<>();
+            testReportDescription.set(result.getMethod()
+                                            .getConstructorOrMethod()
+                                            .getMethod()
+                                            .getAnnotation(TestReporter.class)
+                                            .description());
+            TestReport.getInstance()
+                      .createTestReport(testReportTitle.get(), testReportDescription.get());
+            TestReport.getInstance()
+                      .assignTestCategories(result.getMethod()
+                                                  .getGroups());
+        }
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
         Log.log(Status.PASS, "Great success!");
+    }
+
+    public void debugSleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

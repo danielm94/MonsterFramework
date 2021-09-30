@@ -7,15 +7,15 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import shared_utilities.report_utility.Log;
 import ui.utility.driver.Driver;
-import ui.utility.page_object_utils.Click;
-import ui.utility.page_object_utils.PageObject;
-import ui.utility.page_object_utils.PageTitle;
-import ui.utility.page_object_utils.PageURL;
+import ui.utility.page_object_utils.*;
 
 public final class HomePage implements PageObject {
-    public static final String EXPECTED_HOME_PAGE_URL = "https://www.monster.ca/";
+    public static final String HOME_PAGE_URL = "https://www.monster.ca/";
     @FindBy(css = "a[title='Profile']")
     WebElement profileButton;
+
+    @FindBy(id = "onetrust-accept-btn-handler")
+    WebElement acceptAllCookiesButton;
 
     public HomePage() {
         Driver.getInstance()
@@ -27,24 +27,16 @@ public final class HomePage implements PageObject {
                                        .getDriver(), this);
     }
 
-    @Override
     public boolean isPageLoaded() {
         Log.log(Status.INFO, "Checking if home page has loaded...");
         try {
-            PageURL.contains(EXPECTED_HOME_PAGE_URL);
+            PageURL.contains(HOME_PAGE_URL);
             Log.log(Status.INFO, "Home page is loaded.");
             return true;
         } catch (TimeoutException e) {
             Log.log(Status.WARNING, "The page URL did not contain the expected URL for the home page. Home page did not load correctly.");
             return false;
         }
-    }
-
-    @Override
-    public void navigateToPage() {
-        Driver.getInstance()
-              .getDriver()
-              .get(EXPECTED_HOME_PAGE_URL);
     }
 
     @Override
@@ -55,14 +47,18 @@ public final class HomePage implements PageObject {
             Log.log(Status.INFO, "Title was displayed correctly.");
             return true;
         } catch (TimeoutException e) {
-            Log.log(Status.WARNING, "Home page did not load the correct title! Expected: " + title + " | Found: " + Driver.getInstance()
-                                                                                                                          .getDriver()
-                                                                                                                          .getTitle());
+            Log.log(Status.WARNING, "Home page did not load the correct title! Expected: " + title + " | Found: " + PageTitle.getTitle());
             return false;
         }
     }
 
     public void clickProfileButton() {
         Click.usingElement(profileButton);
+        Log.log(Status.INFO, "Clicked on the profile button.");
+    }
+
+    public void clickAcceptAllCookies() {
+        Click.usingElement(acceptAllCookiesButton);
+        Log.log(Status.INFO, "CLicked on the accept all cookies button.");
     }
 }
