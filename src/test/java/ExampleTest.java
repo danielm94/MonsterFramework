@@ -43,8 +43,6 @@ public class ExampleTest extends UITestBase {
     @Test
     @Parameters({"username", "password"})
     public void azureTest(String username, String password) {
-        System.out.println(username);
-        System.out.println(password);
         HomePage homePage = new HomePage();
         Assert.assertTrue(homePage.isPageLoaded());
         homePage.clickAcceptAllCookies();
